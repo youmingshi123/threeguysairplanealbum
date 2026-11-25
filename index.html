@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三溅客的飞机图库</title>
+    <!-- 引入 CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 登录遮罩层 -->
+    <div id="loginModal" class="modal-overlay active" style="background: rgba(0,0,0,0.8);">
+        <div class="modal-box">
+            <h2>三溅客图库登录</h2>
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="loginUser" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="loginPass" placeholder="请输入密码">
+            </div>
+            <button class="btn-submit" onclick="handleLogin()">登录</button>
+            <p style="text-align: center; font-size: 0.8rem; color: #888; margin-top: 15px;">
+                默认账号: user1 / user2 / user3 / backup<br>初始密码: 11111111
+            </p>
+        </div>
+    </div>
+
+    <!-- 账号设置弹窗 -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>修改账号信息</h2>
+            <div class="form-group">
+                <label>新用户名 (留空则不修改)</label>
+                <input type="text" id="newUsername" placeholder="输入新用户名">
+            </div>
+            <div class="form-group">
+                <label>新密码 (无需原密码)</label>
+                <input type="password" id="newPassword" placeholder="输入新密码">
+            </div>
+            <button class="btn-submit" onclick="saveSettings()">保存修改</button>
+            <button class="btn-submit btn-cancel" onclick="closeModal('settingsModal')">取消</button>
+        </div>
+    </div>
+
+    <!-- 新增飞机/照片弹窗 -->
+    <div id="addAircraftModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>新增飞机 / 照片</h2>
+            <div class="form-group">
+                <label>注册号 * (必填)</label>
+                <input type="text" id="addReg" placeholder="如: B-323H" oninput="handleRegInput()" autocomplete="off">
+            </div>
+            
+            <div id="existingAircraftTip" class="smart-tip"></div>
+            
+            <div id="newAircraftFields">
+                <div class="form-group">
+                    <label>飞机型号 *</label>
+                    <input type="text" id="addModel" placeholder="如: A350-900">
+                </div>
+                <div class="form-group">
+                    <label>所属航司 *</label>
+                    <input type="text" id="addAirline" placeholder="如: 中国东方航空">
+                </div>
+                <div class="form-group">
+                    <label>彩绘名称 (选填，留空则为标准涂装)</label>
+                    <input type="text" id="addLivery" placeholder="如: 首架中国交付A350">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px; border-top: 1px dashed #eee; padding-top: 15px;">
+                <label>拍摄日期 (选填)</label>
+                <input type="date" id="addDate">
+
+                <label style="margin-top: 15px;">上传照片 * (本地图片或网络链接)</label>
+                <div class="file-upload-box" onclick="document.getElementById('addFile').click()">
+                    <span id="uploadText">点击选择本地图片</span>
+                    <input type="file" id="addFile" accept="image/*" onchange="handleFileSelect(event)">
+                </div>
+                <div style="margin: 10px 0; text-align: center; color: #888; font-size: 0.8rem;">或 输入图片网络链接</div>
+                <input type="text" id="addImageUrl" placeholder="https://..." oninput="handleUrlInput()">
+                <img id="imagePreview" class="file-preview" src="" alt="预览">
+            </div>
+
+            <button class="btn-submit" onclick="submitNewAircraft()" id="submitBtn">确认提交</button>
+            <button class="btn-submit btn-cancel" onclick="closeModal('addAircraftModal')">取消</button>
+        </div>
+    </div>
+
+    <!-- 相册展示弹窗 -->
+    <div id="albumModal" class="modal-overlay">
+        <div class="modal-box large">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <div id="albumTitle" style="flex: 1;"></div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-edit" onclick="openEditAircraft(currentAlbumFlight.id)">✏️ 编辑信息</button>
+                    <button class="btn-delete-aircraft" onclick="deleteAircraft(currentAlbumFlight.id)">🗑️ 删除飞机</button>
+                </div>
+            </div>
+            
+            <div id="albumContent" class="album-grid"></div>
+            <button class="btn-submit btn-cancel" style="margin-top: 20px;" onclick="closeModal('albumModal')">关闭</button>
+        </div>
+    </div>
+
+    <!-- 编辑飞机信息弹窗 -->
+    <div id="editAircraftModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>编辑飞机信息</h2>
+            <div class="form-group">
+                <label>注册号 *</label>
+                <input type="text" id="editReg" placeholder="如: B-323H">
+            </div>
+            <div class="form-group">
+                <label>飞机型号 *</label>
+                <input type="text" id="editModel" placeholder="如: A350-900">
+            </div>
+            <div class="form-group">
+                <label>所属航司 *</label>
+                <input type="text" id="editAirline" placeholder="如: 中国东方航空">
+            </div>
+            <div class="form-group">
+                <label>彩绘名称 (留空则为标准涂装)</label>
+                <input type="text" id="editLivery" placeholder="如: 首架中国交付A350">
+            </div>
+            <button class="btn-submit" onclick="saveAircraftEdits()">保存修改</button>
+            <button class="btn-submit btn-cancel" onclick="closeModal('editAircraftModal')">取消</button>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="logo">三溅客的飞机图库</div>
+        <nav class="nav-links">
+            <a href="#" class="active">团队图库</a>
+            <a href="#">我的图库</a>
+            <a href="#">新增飞机</a>
+            <div class="user-info">
+                <span id="displayCurrentUser">未登录</span>
+                <span class="btn-text" onclick="openModal('settingsModal')">设置</span>
+                <span class="btn-text" onclick="handleLogout()" style="color:#e74c3c;">退出</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 顶部横幅区 -->
+    <section class="hero">
+        <h1>三溅客的飞机图库</h1>
+        <p>记录每一次起飞与降落</p>
+    </section>
+
+    <!-- 搜索过滤区 -->
+    <section class="search-container">
+        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="搜索型号、注册号、航司或彩绘…">
+    </section>
+
+    <!-- 核心内容区 -->
+    <main class="gallery-wrapper">
+        <div class="gallery" id="galleryGrid"></div>
+    </main>
+
+    <!-- 悬浮新增按钮 -->
+    <button class="fab-add" onclick="openAddAircraft()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        新增飞机
+    </button>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2026 三溅客的飞机图库</p>
+    </footer>
+
+    <!-- 引入 JS -->
+    <script src="script.js"></script>
+</body>
+</html>
