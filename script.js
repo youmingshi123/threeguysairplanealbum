@@ -1,6 +1,6 @@
 // ================= 配置区 =================
 // 🚨 必须修改 1：填入你的 CloudFlare-ImgBed 地址
-const IMGBED_BASE = "https://你的-imgbed-项目.pages.dev"; 
+const IMGBED_BASE = "https://cloudflare-imgbed-83e.pages.dev"; 
 // 🚨 必须修改 2：填入你刚才部署的 Cloudflare Worker API 地址
 const API_URL = "https://threeguysaa.pages.dev/api/aircrafts"; 
 
