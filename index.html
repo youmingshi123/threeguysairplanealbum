@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>三溅客的飞机图库</title>
-    <!-- 引入 CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- 登录遮罩层 -->
     <div id="loginModal" class="modal-overlay active" style="background: rgba(0,0,0,0.8);">
         <div class="modal-box">
             <h2>三溅客图库登录</h2>
@@ -23,12 +21,11 @@
             </div>
             <button class="btn-submit" onclick="handleLogin()">登录</button>
             <p style="text-align: center; font-size: 0.8rem; color: #888; margin-top: 15px;">
-                默认账号: user1 / user2 / user3 / backup<br>初始密码: 11111111
+                默认账号: user1 / user2 / user3 / beiyong<br>初始密码: 11111111
             </p>
         </div>
     </div>
 
-    <!-- 账号设置弹窗 -->
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-box">
             <h2>修改账号信息</h2>
@@ -45,7 +42,6 @@
         </div>
     </div>
 
-    <!-- 新增飞机/照片弹窗 -->
     <div id="addAircraftModal" class="modal-overlay">
         <div class="modal-box">
             <h2>新增飞机 / 照片</h2>
@@ -90,7 +86,6 @@
         </div>
     </div>
 
-    <!-- 相册展示弹窗 -->
     <div id="albumModal" class="modal-overlay">
         <div class="modal-box large">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
@@ -106,7 +101,6 @@
         </div>
     </div>
 
-    <!-- 编辑飞机信息弹窗 -->
     <div id="editAircraftModal" class="modal-overlay">
         <div class="modal-box">
             <h2>编辑飞机信息</h2>
@@ -131,13 +125,12 @@
         </div>
     </div>
 
-    <!-- 顶部导航栏 -->
     <header class="header">
         <div class="logo">三溅客的飞机图库</div>
         <nav class="nav-links">
-            <a href="#" class="active">团队图库</a>
-            <a href="#">我的图库</a>
-            <a href="#">新增飞机</a>
+            <a href="javascript:void(0)" id="navTeam" class="active" onclick="switchView('team')">团队图库</a>
+            <a href="javascript:void(0)" id="navMine" onclick="switchView('mine')">我的图库</a>
+            <a href="javascript:void(0)" onclick="openAddAircraft()">新增飞机</a>
             <div class="user-info">
                 <span id="displayCurrentUser">未登录</span>
                 <span class="btn-text" onclick="openModal('settingsModal')">设置</span>
@@ -146,13 +139,11 @@
         </nav>
     </header>
 
-    <!-- 顶部横幅区 -->
     <section class="hero">
         <h1>三溅客的飞机图库</h1>
         <p>记录每一次起飞与降落</p>
     </section>
 
-    <!-- 搜索过滤区 -->
     <section class="search-container">
         <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -160,12 +151,10 @@
         <input type="text" id="searchInput" class="search-input" placeholder="搜索型号、注册号、航司或彩绘…">
     </section>
 
-    <!-- 核心内容区 -->
     <main class="gallery-wrapper">
         <div class="gallery" id="galleryGrid"></div>
     </main>
 
-    <!-- 悬浮新增按钮 -->
     <button class="fab-add" onclick="openAddAircraft()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -173,12 +162,10 @@
         新增飞机
     </button>
 
-    <!-- 页脚 -->
     <footer class="footer">
         <p>© 2026 三溅客的飞机图库</p>
     </footer>
 
-    <!-- 引入 JS -->
     <script src="script.js"></script>
 </body>
 </html>
