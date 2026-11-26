@@ -196,28 +196,14 @@ async function preview(file) {
   } finally { bmp.close(); }
 }
 async function upload(blob, name) {
-  const form = new FormData();
-  form.append("file", blob, name);
-
-  const response = await fetch("/api/upload", {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + session.token
-    },
-    body: form
-  });
-
-  if (response.status === 401) {
-    signOut();
-    throw new Error("登录已过期，请重新登录");
-  }
-
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.error || "上传失败");
-  }
-
-  return result.url;
+  const form = new FormData(); form.append("file", blob, name);
+  const r = await fetch(imgOrigin + "/upload", { method: "POST", body: form, credentials: "omit" });
+  if (!r.ok) throw new Error("图床上传失败（" + r.status + "）");
+  const src = (await r.json())?.[0]?.src;
+  if (typeof src !== "string") throw new Error("图床未返回 src");
+  const u = new URL(src, imgOrigin);
+  if (u.origin !== imgOrigin || !u.pathname.startsWith("/file/")) throw new Error("图床返回地址无效");
+  return u.href;
 }
 bindForm("addForm", async f => {
   const values = Object.fromEntries(new FormData(f)), file = values.file, reg = norm(values.reg);
