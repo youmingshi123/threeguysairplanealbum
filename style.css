@@ -3,7 +3,8 @@
   font: 16px/1.55 Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
   color: #142d41;
   background: #f4f7f8;
-  --blue: #155a77;
+  --blue: #168447;
+  --blue-hover: #116b39;
   --line: #ccdade;
 }
 * { box-sizing: border-box; }
@@ -17,6 +18,9 @@ button:hover { border-color: var(--blue); }
 button:focus-visible, input:focus-visible { outline: 3px solid #efaa49; outline-offset: 2px; }
 button:disabled { opacity: .5; cursor: default; }
 .primary, nav [aria-pressed="true"] { background: var(--blue); color: white; border-color: var(--blue); }
+.primary:hover, nav [aria-pressed="true"]:hover { background: var(--blue-hover); border-color: var(--blue-hover); }
+#loginForm .primary { width: 100%; }
+.fab { box-shadow: 0 8px 24px #16844740; }
 .danger { color: #9d302a; }
 input { width: 100%; padding: .7rem .85rem; color: inherit; border: 1px solid var(--line);
   border-radius: .55rem; background: white; }
